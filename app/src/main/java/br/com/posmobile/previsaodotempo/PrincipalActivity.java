@@ -117,13 +117,12 @@ public class PrincipalActivity extends AppCompatActivity {
     private void atualizaPrevisoes(List<Previsao> previsoes) {
         this.previsoes.clear();
         Previsao previsaoDestaque = previsoes.remove(0);
+        //Aqui atualizamos a previsão principal fora do ListView (confira os nomes das variáveis)
         tvTemperaturaHoje.setText(previsaoDestaque.getTemperatura());
         tvPeriodoHoje.setText(previsaoDestaque.getPeriodo());
-
         //todo Buscar icone do tempo com GLIDE aqui (Após finalizar e testar AsyncTask)
-
-        PrincipalActivity.this.previsoes.addAll(previsoes);
-        ((ArrayAdapter) PrincipalActivity.this.listaPrevisoes.getAdapter()).notifyDataSetChanged();
+        this.previsoes.addAll(previsoes);
+        ((ArrayAdapter) this.listaPrevisoes.getAdapter()).notifyDataSetChanged();
     }
 
 
