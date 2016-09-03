@@ -12,6 +12,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -38,26 +40,26 @@ public class PrincipalActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.principal);
-        listaPrevisoes = (ListView) findViewById(R.id.previsoesListView);
-        tvTemperaturaHoje = (TextView) findViewById(R.id.textViewTempHoje);
-        tvPeriodoHoje = (TextView) findViewById(R.id.textViewPeriodoHoje);
-        ivIconeHoje = (ImageView) findViewById(R.id.imageViewIconeHoje);
+        listaPrevisoes      = (ListView) findViewById(R.id.previsoesListView);
+        tvTemperaturaHoje   = (TextView) findViewById(R.id.textViewTempHoje);
+        tvPeriodoHoje       = (TextView) findViewById(R.id.textViewPeriodoHoje);
+        ivIconeHoje         = (ImageView) findViewById(R.id.imageViewIconeHoje);
 
         listaPrevisoes.setAdapter(new ListaPrevisaoAdapter(this, previsoes));
 
         listaPrevisoes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
                 Toast.makeText(PrincipalActivity.this, "O item " + position + "foi selecionado",
                         Toast.LENGTH_SHORT).show();
-
             }
         });
 
 
         //todo Criar um novo objeto do AsyncTask customizado
         //todo Executar o AsyncTask
+        PrevisaoAsyncTask previsaoTask = new PrevisaoAsyncTask();
+        previsaoTask.execute();
 
     }
 
@@ -85,10 +87,11 @@ public class PrincipalActivity extends AppCompatActivity {
                         previsaoTemp.setPeriodo(listaPrevisoes.getJSONObject(i).getLong("dt") * 1000);
                         previsaoTemp.setTemperatura(listaPrevisoes.getJSONObject(i).getJSONObject("temp").getDouble("day") + "°");
                         previsaoTemp.setIcone(listaPrevisoes.getJSONObject(i).getJSONArray("weather").getJSONObject(0).getString("icon"));
+                        previsaoTemp.setDescricao(listaPrevisoes.getJSONObject(i).getJSONArray("weather").getJSONObject(0).getString("description"));
                         //todo Preencher atributo descricao buscando o dado em weather->description
 
-
                         //todo BUG descobrir o que falta aqui
+                        previsoes.add(previsaoTemp); //adicionando o objeto à lista
                     }
                     return previsoes;
                 } else {
@@ -110,6 +113,14 @@ public class PrincipalActivity extends AppCompatActivity {
             //todo checar se vieram previsões
             //todo atualizar previsoes
             //todo exibir Toast caso não tenham vindo previsões
+            //Verificando se foram carregadas previsoes
+            if(previsoes.size() > 0)
+                atualizaPrevisoes(previsoes);
+            else {
+                tvPeriodoHoje.setText("Sem dados");
+                tvTemperaturaHoje.setText("Sem dados");
+                Toast.makeText(PrincipalActivity.this, "Nenhuma previsão disponível!", Toast.LENGTH_LONG).show();
+            }
 
         }
     }
@@ -121,6 +132,7 @@ public class PrincipalActivity extends AppCompatActivity {
         tvPeriodoHoje.setText(previsaoDestaque.getPeriodo());
 
         //todo Buscar icone do tempo com GLIDE aqui (Após finalizar e testar AsyncTask)
+        Glide.with(this).load(previsaoDestaque.getIcone()).into(ivIconeHoje);
 
         PrincipalActivity.this.previsoes.addAll(previsoes);
         ((ArrayAdapter) PrincipalActivity.this.listaPrevisoes.getAdapter()).notifyDataSetChanged();

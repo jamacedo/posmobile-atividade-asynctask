@@ -8,6 +8,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+
 import java.util.List;
 
 /**
@@ -38,8 +40,7 @@ public class ListaPrevisaoAdapter extends ArrayAdapter<Previsao> {
         tvPeriodo.setText(previsao.getPeriodo());
         tvTemperatura.setText(previsao.getTemperatura());
         tvDescricao.setText(previsao.getDescricao());
-
-        //todo Buscar icone utilizando Glide em conjunto com URL base de icones
+        Glide.with(getContext()).load(previsao.getIcone()).into(ivIcone);
 
         return convertView;
     }

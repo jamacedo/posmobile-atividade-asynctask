@@ -3,6 +3,7 @@ package br.com.posmobile.previsaodotempo;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * Created by alexandre on 06/08/16.
@@ -14,8 +15,9 @@ public class Previsao {
     String temperatura;
     String icone;
     String descricao;
+    final static Locale local = new Locale("pt","BR");
     final static SimpleDateFormat dateFormat =
-                   new SimpleDateFormat("dd, EEEE");
+                   new SimpleDateFormat("dd, EEEE", local);
 
 
     public Previsao() {
@@ -47,7 +49,9 @@ public class Previsao {
     }
 
     public void setIcone(String icone) {
-        this.icone = icone;
+
+        //this.icone = icone;
+        this.icone = String.format(Utils.URL_ICONE, icone);
     }
 
 
